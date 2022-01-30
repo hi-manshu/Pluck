@@ -8,6 +8,7 @@ import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.himanshoe.pluck.theme.PluckTheme
+import com.himanshoe.pluck.ui.GalleryPicker
 import com.himanshoe.pluck.util.Permission
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
             PluckTheme {
                 Permission(permission = Manifest.permission.READ_EXTERNAL_STORAGE,
                     goToAppSettings = { goToAppSettings() }) {
-
+                    GalleryPicker()
                 }
             }
         }
