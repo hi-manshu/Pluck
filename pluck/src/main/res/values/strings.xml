@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_prompt">Please allow access to the permission.</string>
+    <string name="permission_prompt_button">Let\'s go</string>
+    <string name="permissions_rationale">Permission is denied. Please grant access in settings to use this app.</string>
+</resources>
