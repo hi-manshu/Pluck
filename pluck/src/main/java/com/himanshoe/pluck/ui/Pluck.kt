@@ -35,9 +35,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
 import com.himanshoe.pluck.R
-import com.himanshoe.pluck.data.PluckDataSource
 import com.himanshoe.pluck.data.PluckImage
-import com.himanshoe.pluck.data.PluckRepository
+import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
@@ -52,8 +51,8 @@ fun Pluck(
 ) {
     val context = LocalContext.current
     val pluckViewModel: PluckViewModel = viewModel(factory = PluckViewModelFactory(
-        PluckRepository(
-            PluckDataSource(context.contentResolver)
+        PluckRepositoryImpl(
+            context
         )
     ))
 
@@ -89,7 +88,9 @@ fun Pluck(
                         painter = rememberImagePainter(R.drawable.ic_camera),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(PluckDimens.Six).alpha(0.2F)
+                        modifier = Modifier
+                            .size(PluckDimens.Six)
+                            .alpha(0.2F)
                     )
                 }
             }

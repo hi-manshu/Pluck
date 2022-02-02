@@ -2,6 +2,8 @@ package com.himanshoe.pluck.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.himanshoe.pluck.data.PluckImage
@@ -17,8 +19,14 @@ class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel()
 
     val selectedImage: StateFlow<List<PluckImage>> = _selectedImage
 
-    fun getImages(): Flow<PagingData<PluckImage>> =
-        pluckRepository.getImages().cachedIn(viewModelScope)
+//    fun getImages(): Flow<PagingData<PluckImage>> =
+//        pluckRepository.getImages().cachedIn(viewModelScope)
+
+    fun getImages(): Flow<PagingData<PluckImage>> = Pager(
+        config = PagingConfig(pageSize = 50, initialLoadSize = 50, enablePlaceholders = true)
+    ) {
+        pluckRepository.getPicturePagingSource()
+    }.flow.cachedIn(viewModelScope)
 
     fun isPhotoSelected(pluckImage: PluckImage, isSelected: Boolean) {
         if (isSelected) {

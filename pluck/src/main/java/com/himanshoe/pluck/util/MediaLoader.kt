@@ -2,32 +2,51 @@ package com.himanshoe.pluck.util
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.Context
+import android.database.Cursor
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.core.os.bundleOf
 import com.himanshoe.pluck.data.PluckImage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
-suspend fun getImages(
-    contentResolver: ContentResolver,
-    images: MutableList<PluckImage>,
-) = withContext(Dispatchers.IO) {
-    val projection = arrayOf(
-        MediaStore.Images.Media._ID,
-        MediaStore.Images.Media.DISPLAY_NAME,
-        MediaStore.Images.Media.DATE_TAKEN,
-        MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-    )
 
-    val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
-    val cursor = contentResolver.query(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        projection,
-        null,
-        null,
-        sortOrder
-    )
+private val projection = arrayOf(
+    MediaStore.Images.Media._ID,
+    MediaStore.Images.Media.DISPLAY_NAME,
+    MediaStore.Images.Media.DATE_TAKEN,
+    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+)
 
+internal fun Context.createCursor(limit: Int, offset: Int): Cursor? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val bundle = bundleOf(
+            ContentResolver.QUERY_ARG_OFFSET to offset,
+            ContentResolver.QUERY_ARG_LIMIT to limit,
+            ContentResolver.QUERY_ARG_SORT_COLUMNS to arrayOf(MediaStore.Images.Media.DATE_ADDED),
+            ContentResolver.QUERY_ARG_SORT_DIRECTION to ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+        )
+        contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            bundle,
+            null
+        )
+    } else {
+        contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            null,
+            null,
+            "${MediaStore.Images.Media.DATE_ADDED} DESC LIMIT $limit OFFSET $offset",
+            null
+        )
+    }
+}
+
+internal fun Context.fetchPagePicture(limit: Int, offset: Int): List<PluckImage> {
+    val pictures = ArrayList<PluckImage>()
+    val cursor = createCursor(limit, offset)
     cursor?.use {
         val idColumn = it.getColumnIndexOrThrow(projection[0])
         val displayNameColumn = it.getColumnIndexOrThrow(projection[1])
@@ -46,7 +65,7 @@ suspend fun getImages(
 
             Log.d("imagesPlu",
                 "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $folderName")
-            images.add(PluckImage(contentUri,
+            pictures.add(PluckImage(contentUri,
                 dateTaken,
                 displayName,
                 id,
@@ -54,6 +73,6 @@ suspend fun getImages(
         }
     }
     cursor?.close()
-    images
+    return pictures
 }
 
