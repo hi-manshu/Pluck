@@ -16,6 +16,8 @@ object Deps {
         val uiToolingPreview by lazy { "androidx.compose.ui:ui-tooling-preview:${Versions.compose}" }
         val material by lazy { "androidx.compose.material:material:${Versions.compose}" }
         val activity by lazy { "androidx.activity:activity-compose:${Versions.activity}" }
+        val viewmodel by lazy { "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07" }
+        val paging by lazy { "androidx.paging:paging-compose:1.0.0-alpha14" }
     }
 
     object Accompanist {

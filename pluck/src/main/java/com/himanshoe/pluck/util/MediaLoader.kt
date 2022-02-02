@@ -1,57 +1,59 @@
 package com.himanshoe.pluck.util
 
+import android.content.ContentResolver
 import android.content.ContentUris
-import android.content.Context
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.himanshoe.pluck.data.PluckImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun loadPhotosFromExternalStorageIntoVariable(
-    context: Context,
-    photos: SnapshotStateList<PluckImage>,
-) {
-    photos.addAll(loadPhotosFromExternalStorage(context))
-}
+suspend fun getImages(
+    contentResolver: ContentResolver,
+    images: MutableList<PluckImage>,
+) = withContext(Dispatchers.IO) {
+    val projection = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.DATE_TAKEN,
+        MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+    )
 
+    val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+    val cursor = contentResolver.query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection,
+        null,
+        null,
+        sortOrder
+    )
 
-private suspend fun loadPhotosFromExternalStorage(
-    context: Context,
-): List<PluckImage> {
-    return withContext(Dispatchers.IO) {
-        val collection = sdk29AndUp {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } ?: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    cursor?.use {
+        val idColumn = it.getColumnIndexOrThrow(projection[0])
+        val displayNameColumn = it.getColumnIndexOrThrow(projection[1])
+        val dateTakenColumn = it.getColumnIndexOrThrow(projection[2])
+        val bucketDisplayName = it.getColumnIndexOrThrow(projection[3])
 
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT,
-        )
+        while (it.moveToNext()) {
+            val id = it.getLong(idColumn)
+            val dateTaken = it.getLong(dateTakenColumn)
+            val displayName = it.getString(displayNameColumn)
+            val contentUri = ContentUris.withAppendedId(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                id
+            )
+            val bucketId = it.getString(bucketDisplayName)
 
-        val photos = mutableListOf<PluckImage>()
-
-        context.contentResolver.query(
-            collection,
-            projection,
-            null,
-            null,
-            "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
-        )?.use { cursor ->
-            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            while (cursor.moveToNext()) {
-                val id = cursor.getLong(idColumn)
-                val contentUri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                photos.add(PluckImage(contentUri))
-            }
-            photos.toList()
-        } ?: emptyList()
+            Log.d("images",
+                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $bucketId")
+            images.add(PluckImage(contentUri,
+                dateTaken,
+                displayName,
+                id,
+                bucketDisplayName.toString()))
+        }
     }
+    cursor?.close()
+    images
 }
+
