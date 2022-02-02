@@ -16,10 +16,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.*
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -52,11 +61,13 @@ fun Pluck(
     onPhotoClicked: (Bitmap?) -> Unit,
 ) {
     val context = LocalContext.current
-    val pluckViewModel: PluckViewModel = viewModel(factory = PluckViewModelFactory(
-        PluckRepositoryImpl(
-            context
+    val pluckViewModel: PluckViewModel = viewModel(
+        factory = PluckViewModelFactory(
+            PluckRepositoryImpl(
+                context
+            )
         )
-    ))
+    )
 
     val lazyPluckImages: LazyPagingItems<PluckImage> =
         pluckViewModel.getImages().collectAsLazyPagingItems()
@@ -78,14 +89,16 @@ fun Pluck(
             }
         LazyVerticalGrid(
             modifier = Modifier.background(MaterialTheme.colors.surface),
-            cells = GridCells.Fixed(3)) {
+            cells = GridCells.Fixed(3)
+        ) {
             item {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = modifier
                         .size(PluckDimens.Sixteen)
                         .clickable { handleCamera(cameraLauncher) }
-                        .then(Modifier.background(MaterialTheme.colors.background))) {
+                        .then(Modifier.background(MaterialTheme.colors.background))
+                ) {
                     Image(
                         painter = rememberImagePainter(R.drawable.ic_camera),
                         contentDescription = null,
@@ -103,8 +116,10 @@ fun Pluck(
                         pluckImage = pluckImage,
                         selectedImages = pluckViewModel.selectedImage,
                         onSelectedPhoto = { image, isSelected ->
-                            pluckViewModel.isPhotoSelected(pluckImage = image,
-                                isSelected = isSelected)
+                            pluckViewModel.isPhotoSelected(
+                                pluckImage = image,
+                                isSelected = isSelected
+                            )
                         }
                     )
                 }

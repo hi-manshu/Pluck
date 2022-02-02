@@ -5,7 +5,6 @@ object Plugins {
     val kotlinAndroid by lazy { "kotlin-android" }
     val vanniktechPublish by lazy { "com.vanniktech.maven.publish" }
     val ktlint by lazy { "org.jlleitschuh.gradle.ktlint" }
-    val detekt by lazy { "io.gitlab.arturbosch.detekt" }
 }
 
 object Deps {
@@ -39,6 +38,5 @@ object Deps {
         val androidGradlePlugin by lazy { "com.android.tools.build:gradle:${Versions.androidGradlePlugin}" }
         val vanniktechGradlePlugin by lazy { "com.vanniktech:gradle-maven-publish-plugin:${Versions.vanniktechGradlePlugin}" }
         val ktlintGradlePlugin by lazy { "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlint}" }
-        val detektGradlePlugin by lazy { "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detekt}" }
     }
 }

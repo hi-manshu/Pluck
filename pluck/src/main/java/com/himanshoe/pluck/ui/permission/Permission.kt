@@ -2,7 +2,14 @@ package com.himanshoe.pluck.ui.permission
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -18,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -27,8 +33,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.himanshoe.pluck.R
 import com.himanshoe.pluck.theme.PluckDimens
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
+@OptIn(ExperimentalPermissionsApi::class)
 fun Permission(
     permissions: List<String>,
     goToAppSettings: () -> Unit,
@@ -113,8 +119,7 @@ fun Permission(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-
-                        .size(128.dp)
+                        .size(PluckDimens.Sixteen)
                         .aspectRatio(1F)
                 )
                 Spacer(modifier = Modifier.height(PluckDimens.Three))
@@ -129,9 +134,7 @@ fun Permission(
                 Spacer(modifier = Modifier.height(PluckDimens.Three))
 
                 Button(
-                    onClick = {
-                        goToAppSettings()
-                    },
+                    onClick = { goToAppSettings() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.primary),
@@ -142,7 +145,8 @@ fun Permission(
                     )
                 }
             }
-        }) {
+        }
+    ) {
         appContent()
     }
 }
