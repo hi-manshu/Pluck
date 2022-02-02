@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 class PluckRepository constructor(
-    private val pluckDataSource: PluckDataSource
+    private val pluckDataSource: PluckDataSource,
 ) {
     fun getImages(): Flow<PagingData<PluckImage>> {
         return Pager(

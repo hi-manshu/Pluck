@@ -1,21 +1,27 @@
 package com.himanshoe.pluck.ui
 
+import android.graphics.Bitmap
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
@@ -31,21 +37,25 @@ import coil.compose.rememberImagePainter
 import com.himanshoe.pluck.data.PluckDataSource
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
+import com.himanshoe.pluck.theme.PluckDimens
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalFoundationApi::class)
+private const val SELECT = "SELECT"
+
 @Composable
-fun PluckPicker(
-    onSelectedPhotos: (List<PluckImage>) -> Unit,
+@OptIn(ExperimentalFoundationApi::class)
+fun Pluck(
+    onPhotoSelected: (List<PluckImage>) -> Unit,
+    onPhotoClicked: (Bitmap?) -> Unit,
 ) {
     val context = LocalContext.current
-
     val pluckViewModel: PluckViewModel = viewModel(factory = PluckViewModelFactory(
         PluckRepository(
             PluckDataSource(context.contentResolver)
         )
     ))
+
     val lazyPluckImages: LazyPagingItems<PluckImage> =
         pluckViewModel.getImages().collectAsLazyPagingItems()
 
@@ -54,17 +64,37 @@ fun PluckPicker(
             modifier = Modifier,
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = MaterialTheme.colors.onPrimary,
-            text = { Text(text = "SELECT") },
-            onClick = { onSelectedPhotos(pluckViewModel.selectedImage.value) },
+            text = { Text(text = SELECT) },
+            onClick = { onPhotoSelected(pluckViewModel.selectedImage.value) },
             icon = { Icon(Icons.Filled.Check, "") }
         )
     }) {
-
-        LazyVerticalGrid(cells = GridCells.Fixed(3)) {
+        val modifier = Modifier.padding(2.dp)
+        val cameraLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
+                onPhotoClicked(it)
+            }
+        LazyVerticalGrid(
+            modifier = Modifier.background(MaterialTheme.colors.surface),
+            cells = GridCells.Fixed(3)) {
+            item {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .size(PluckDimens.Sixteen)
+                        .clickable { handleCamera(cameraLauncher) }
+                        .then(Modifier.background(MaterialTheme.colors.background))) {
+                    Icon(
+                        Icons.Filled.Add,
+                        tint = MaterialTheme.colors.onBackground,
+                        contentDescription = "add-photo"
+                    )
+                }
+            }
             items(lazyPluckImages.itemCount) { index ->
                 lazyPluckImages[index]?.let { pluckImage ->
                     PluckImage(
-                        modifier = Modifier,
+                        modifier = modifier,
                         pluckImage = pluckImage,
                         selectedImages = pluckViewModel.selectedImage,
                         onSelectedPhoto = { image, isSelected ->
@@ -85,8 +115,10 @@ fun PluckPicker(
             }
         }
     }
+}
 
-
+private fun handleCamera(onPhotoClicked: ManagedActivityResultLauncher<Void?, Bitmap?>) {
+    onPhotoClicked.launch()
 }
 
 @Composable
@@ -101,17 +133,16 @@ internal fun PluckImage(
     val transition = updateTransition(selected.value, label = "change-padding")
 
     val animatedPadding by transition.animateDp(label = "change-padding") { isSelected ->
-        if (isSelected) 8.dp else 0.dp
+        if (isSelected) PluckDimens.One else PluckDimens.Zero
     }
 
     Box(
         modifier = modifier
-            .padding(2.dp)
             .clickable {
                 selected.value = !selected.value
                 onSelectedPhoto(pluckImage, selected.value)
             }
-            .size(128.dp),
+            .size(PluckDimens.Sixteen),
         contentAlignment = Alignment.Center,
     ) {
         Image(
@@ -126,7 +157,7 @@ internal fun PluckImage(
                     selected.value = !selected.value
                     onSelectedPhoto(pluckImage, selected.value)
                 }
-                .size(128.dp),
+                .size(PluckDimens.Sixteen),
             contentAlignment = Alignment.TopEnd,
         ) {
             PluckImageIndicator(text = images.indexOf(pluckImage).toString())
@@ -135,7 +166,7 @@ internal fun PluckImage(
 }
 
 @Composable
-fun PluckImageIndicator(text: String) {
+internal fun PluckImageIndicator(text: String) {
     if (text.toInt() > -1) {
         val backgroundColor = MaterialTheme.colors.primary
         val textColor = MaterialTheme.colors.onPrimary
@@ -151,7 +182,7 @@ fun PluckImageIndicator(text: String) {
                 .drawBehind {
                     drawCircle(backgroundColor)
                 }
-                .padding(8.dp)
+                .padding(PluckDimens.One)
         )
     }
 }
