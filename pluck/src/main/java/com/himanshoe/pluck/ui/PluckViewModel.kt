@@ -19,9 +19,6 @@ class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel()
 
     val selectedImage: StateFlow<List<PluckImage>> = _selectedImage
 
-//    fun getImages(): Flow<PagingData<PluckImage>> =
-//        pluckRepository.getImages().cachedIn(viewModelScope)
-
     fun getImages(): Flow<PagingData<PluckImage>> = Pager(
         config = PagingConfig(pageSize = 50, initialLoadSize = 50, enablePlaceholders = true)
     ) {
