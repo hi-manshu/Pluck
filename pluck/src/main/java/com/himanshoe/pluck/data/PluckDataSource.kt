@@ -1,36 +1,28 @@
 package com.himanshoe.pluck.data
 
-import android.content.ContentResolver
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.himanshoe.pluck.util.getImages
 
-class PluckDataSource(private val contentResolver: ContentResolver) :
+class PluckDataSource(private val onFetch: (limit: Int, offset: Int) -> List<PluckImage>) :
     PagingSource<Int, PluckImage>() {
-
-    private val images = mutableListOf<PluckImage>()
-
     override fun getRefreshKey(state: PagingState<Int, PluckImage>): Int? {
-        return state.anchorPosition
+        return state.anchorPosition?.let {
+            state.closestPageToPosition(it)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PluckImage> {
-        return try {
-            val pagedKeyDate = params.key ?: System.currentTimeMillis()
-            val images = getImages(contentResolver, images)
-            val lastItemDate = images.last().dateTaken
+        val pageNumber = params.key ?: 0
+        val pageSize = params.loadSize
+        val pictures = onFetch.invoke(pageSize, pageNumber * pageSize)
+        val prevKey = if (pageNumber > 0) pageNumber - 1 else null
+        val nextKey = if (pictures.isNotEmpty()) pageNumber + 1 else null
 
-            if (pagedKeyDate == lastItemDate) {
-                return LoadResult.Error(Throwable())
-            }
-
-            LoadResult.Page(
-                data = images,
-                prevKey = null,
-                nextKey = images.last().id.toInt()
-            )
-        } catch (e: Exception) {
-            LoadResult.Error(e)
-        }
+        return LoadResult.Page(
+            data = pictures,
+            prevKey = prevKey,
+            nextKey = nextKey
+        )
     }
 }
