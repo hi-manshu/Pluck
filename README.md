@@ -39,8 +39,7 @@ Pluck(onPhotoSelected = {
     // List of PluckImage when selecting from Gallery             
 }, onPhotoClicked = {
     // Bitmap when using Camera
-}
-)
+})
 ```
 
 #### 02
@@ -61,10 +60,9 @@ Permission(
         // List of PluckImage when selecting from Gallery             
     }, onPhotoClicked = {
         // Bitmap when using Camera
-    }
-    )
+    })
 }
 ```
 
-### Drop a ⭐ to keep me motivated to keep working on Open-Source. Updates coming Soo!
+### Drop a ⭐ to keep me motivated to keep working on Open-Source. Updates coming Soon!
 
