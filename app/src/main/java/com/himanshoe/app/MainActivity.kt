@@ -18,7 +18,8 @@ class MainActivity : ComponentActivity() {
             PluckTheme {
                 Permission(permission = Manifest.permission.READ_EXTERNAL_STORAGE,
                     goToAppSettings = { goToAppSettings() }) {
-                    PluckPicker()
+                    PluckPicker {
+                    }
                 }
             }
         }
