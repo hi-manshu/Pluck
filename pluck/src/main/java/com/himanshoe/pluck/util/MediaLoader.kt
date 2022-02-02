@@ -42,15 +42,15 @@ suspend fun getImages(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 id
             )
-            val bucketId = it.getString(bucketDisplayName)
+            val folderName = it.getString(bucketDisplayName)
 
-            Log.d("images",
-                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $bucketId")
+            Log.d("imagesPlu",
+                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $folderName")
             images.add(PluckImage(contentUri,
                 dateTaken,
                 displayName,
                 id,
-                bucketDisplayName.toString()))
+                folderName.toString()))
         }
     }
     cursor?.close()

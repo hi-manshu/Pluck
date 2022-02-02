@@ -7,5 +7,5 @@ data class PluckImage(
     internal val dateTaken: Long?,
     val displayName: String,
     internal val id: Long,
-    internal val bucketName: String,
+    internal val folderName: String,
 )
