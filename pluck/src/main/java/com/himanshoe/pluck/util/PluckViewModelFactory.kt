@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.himanshoe.pluck.data.PluckRepository
 import com.himanshoe.pluck.ui.PluckViewModel
 
-class PluckViewModelFactory (val pluckRepository: PluckRepository): ViewModelProvider.Factory {
+class PluckViewModelFactory(val pluckRepository: PluckRepository) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(PluckViewModel::class.java)) {
