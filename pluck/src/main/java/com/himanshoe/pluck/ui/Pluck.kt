@@ -16,11 +16,11 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +34,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
+import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckDataSource
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
@@ -66,7 +67,7 @@ fun Pluck(
             contentColor = MaterialTheme.colors.onPrimary,
             text = { Text(text = SELECT) },
             onClick = { onPhotoSelected(pluckViewModel.selectedImage.value) },
-            icon = { Icon(Icons.Filled.Check, "") }
+            icon = { Icon(Icons.Rounded.Check, "") }
         )
     }) {
         val modifier = Modifier.padding(2.dp)
@@ -84,10 +85,11 @@ fun Pluck(
                         .size(PluckDimens.Sixteen)
                         .clickable { handleCamera(cameraLauncher) }
                         .then(Modifier.background(MaterialTheme.colors.background))) {
-                    Icon(
-                        Icons.Filled.Add,
-                        tint = MaterialTheme.colors.onBackground,
-                        contentDescription = "add-photo"
+                    Image(
+                        painter = rememberImagePainter(R.drawable.ic_camera),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(PluckDimens.Six).alpha(0.2F)
                     )
                 }
             }
