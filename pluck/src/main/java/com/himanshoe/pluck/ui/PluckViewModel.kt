@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel() {
 
     private val selectedImageList: MutableList<PluckImage> = ArrayList()
-    val _selectedImage = MutableStateFlow(emptyList<PluckImage>())
+    private val _selectedImage = MutableStateFlow(emptyList<PluckImage>())
+
     val selectedImage: StateFlow<List<PluckImage>> = _selectedImage
 
     fun getImages(): Flow<PagingData<PluckImage>> =
@@ -26,6 +27,6 @@ class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel()
             selectedImageList.filter { it.id == pluckImage.id }
                 .forEach { selectedImageList.remove(it) }
         }
-        _selectedImage.value = (selectedImage.value + selectedImageList).toSet().toList()
+        _selectedImage.value = (selectedImageList).toSet().toList()
     }
 }

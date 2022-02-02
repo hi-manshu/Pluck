@@ -1,14 +1,11 @@
 package com.himanshoe.pluck.ui
 
-import android.util.Log
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.CircularProgressIndicator
@@ -16,11 +13,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -30,12 +31,11 @@ import com.himanshoe.pluck.data.PluckDataSource
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
 import com.himanshoe.pluck.util.PluckViewModelFactory
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GalleryPicker() {
+fun PluckPicker() {
     val context = LocalContext.current
 
     val pluckViewModel: PluckViewModel = viewModel(factory = PluckViewModelFactory(
@@ -48,7 +48,7 @@ fun GalleryPicker() {
     LazyVerticalGrid(cells = GridCells.Fixed(3)) {
         items(lazyPluckImages.itemCount) { index ->
             lazyPluckImages[index]?.let { pluckImage ->
-                PluckSelectedImage(
+                PluckImage(
                     modifier = Modifier,
                     pluckImage = pluckImage,
                     selectedImages = pluckViewModel.selectedImage,
@@ -68,51 +68,10 @@ fun GalleryPicker() {
             }
         }
     }
-//    var imageUri by remember {
-//        mutableStateOf<Uri?>(null)
-//    }
-//    val bitmap = remember {
-//        mutableStateOf<Bitmap?>(null)
-//    }
-//
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetMultipleContents()
-//    ) { uri: List<Uri> ->
-//        imageUri = uri.first()
-//    }
-//
-//    Column {
-//        Button(onClick = {
-//            launcher.launch("image/*")
-//        }) {
-//            Text(text = "Pick image")
-//        }
-//
-//        Spacer(modifier = Modifier.height(12.dp))
-//
-//        imageUri?.let {
-//            if (Build.VERSION.SDK_INT < 28) {
-//                bitmap.value = MediaStore.Images
-//                    .Media.getBitmap(context.contentResolver, it)
-//            } else {
-//                val source = ImageDecoder
-//                    .createSource(context.contentResolver, it)
-//                bitmap.value = ImageDecoder.decodeBitmap(source)
-//            }
-//
-//            bitmap.value?.let { btm ->
-//                Image(
-//                    bitmap = btm.asImageBitmap(),
-//                    contentDescription = null,
-//                    modifier = Modifier.size(400.dp)
-//                )
-//            }
-//        }
-//    }
 }
 
 @Composable
-fun PluckSelectedImage(
+internal fun PluckImage(
     modifier: Modifier,
     pluckImage: PluckImage,
     selectedImages: StateFlow<List<PluckImage>>,
@@ -120,9 +79,14 @@ fun PluckSelectedImage(
 ) {
     val selected = remember { mutableStateOf(false) }
     val images by selectedImages.collectAsState(initial = emptyList())
+    val transition = updateTransition(selected.value, label = "change-padding")
 
+    val animatedPadding by transition.animateDp(label = "change-padding") { isSelected ->
+        if (isSelected) 8.dp else 0.dp
+    }
     Box(
         modifier = modifier
+            .padding(2.dp)
             .clickable {
                 selected.value = !selected.value
                 onSelectedPhoto(pluckImage, selected.value)
@@ -134,9 +98,10 @@ fun PluckSelectedImage(
             painter = rememberImagePainter(pluckImage.uri),
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            modifier = Modifier.padding(animatedPadding)
         )
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .clickable {
                     selected.value = !selected.value
                     onSelectedPhoto(pluckImage, selected.value)
@@ -144,9 +109,26 @@ fun PluckSelectedImage(
                 .size(128.dp),
             contentAlignment = Alignment.TopEnd,
         ) {
-            Text(text = images.indexOf(pluckImage).toString(),
-                textAlign = TextAlign.End,
-                modifier = Modifier.border(width = 1.dp, color = Color.Blue))
+            PluckImageIndicator(text = images.indexOf(pluckImage).toString())
         }
+    }
+}
+
+@Composable
+fun PluckImageIndicator(text: String) {
+    if (text.toInt() > -1) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            modifier = Modifier
+                .drawBehind {
+                    drawCircle(Color(0xFF187bcd))
+                }
+                .padding(8.dp)
+        )
     }
 }
