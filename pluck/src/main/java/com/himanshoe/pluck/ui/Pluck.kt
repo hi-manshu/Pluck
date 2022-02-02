@@ -11,7 +11,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.*
@@ -30,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
@@ -42,6 +43,7 @@ import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 private const val SELECT = "SELECT"
+private const val ONE = 1
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
@@ -103,16 +105,7 @@ fun Pluck(
                         onSelectedPhoto = { image, isSelected ->
                             pluckViewModel.isPhotoSelected(pluckImage = image,
                                 isSelected = isSelected)
-                        })
-                }
-            }
-
-            if (lazyPluckImages.loadState.append == LoadState.Loading) {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
+                        }
                     )
                 }
             }
@@ -163,14 +156,14 @@ internal fun PluckImage(
                 .size(PluckDimens.Sixteen),
             contentAlignment = Alignment.TopEnd,
         ) {
-            PluckImageIndicator(text = images.indexOf(pluckImage).toString())
+            PluckImageIndicator(text = images.indexOf(pluckImage).plus(ONE).toString())
         }
     }
 }
 
 @Composable
 internal fun PluckImageIndicator(text: String) {
-    if (text.toInt() > -1) {
+    if (text.toInt() > 0) {
         val backgroundColor = MaterialTheme.colors.primary
         val textColor = MaterialTheme.colors.onPrimary
 
