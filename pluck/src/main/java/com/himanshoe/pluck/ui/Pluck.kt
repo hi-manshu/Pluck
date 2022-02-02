@@ -37,11 +37,14 @@ import coil.compose.rememberImagePainter
 import com.himanshoe.pluck.data.PluckDataSource
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
+import com.himanshoe.pluck.theme.PluckDimens
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalFoundationApi::class)
+private const val SELECT = "SELECT"
+
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun Pluck(
     onPhotoSelected: (List<PluckImage>) -> Unit,
     onPhotoClicked: (Bitmap?) -> Unit,
@@ -61,7 +64,7 @@ fun Pluck(
             modifier = Modifier,
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = MaterialTheme.colors.onPrimary,
-            text = { Text(text = "SELECT") },
+            text = { Text(text = SELECT) },
             onClick = { onPhotoSelected(pluckViewModel.selectedImage.value) },
             icon = { Icon(Icons.Filled.Check, "") }
         )
@@ -78,13 +81,13 @@ fun Pluck(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = modifier
-                        .size(128.dp)
+                        .size(PluckDimens.Sixteen)
                         .clickable { handleCamera(cameraLauncher) }
                         .then(Modifier.background(MaterialTheme.colors.background))) {
                     Icon(
                         Icons.Filled.Add,
                         tint = MaterialTheme.colors.onBackground,
-                        contentDescription = "Localized description"
+                        contentDescription = "add-photo"
                     )
                 }
             }
@@ -130,7 +133,7 @@ internal fun PluckImage(
     val transition = updateTransition(selected.value, label = "change-padding")
 
     val animatedPadding by transition.animateDp(label = "change-padding") { isSelected ->
-        if (isSelected) 8.dp else 0.dp
+        if (isSelected) PluckDimens.One else PluckDimens.Zero
     }
 
     Box(
@@ -139,7 +142,7 @@ internal fun PluckImage(
                 selected.value = !selected.value
                 onSelectedPhoto(pluckImage, selected.value)
             }
-            .size(128.dp),
+            .size(PluckDimens.Sixteen),
         contentAlignment = Alignment.Center,
     ) {
         Image(
@@ -154,7 +157,7 @@ internal fun PluckImage(
                     selected.value = !selected.value
                     onSelectedPhoto(pluckImage, selected.value)
                 }
-                .size(128.dp),
+                .size(PluckDimens.Sixteen),
             contentAlignment = Alignment.TopEnd,
         ) {
             PluckImageIndicator(text = images.indexOf(pluckImage).toString())
@@ -163,7 +166,7 @@ internal fun PluckImage(
 }
 
 @Composable
-fun PluckImageIndicator(text: String) {
+internal fun PluckImageIndicator(text: String) {
     if (text.toInt() > -1) {
         val backgroundColor = MaterialTheme.colors.primary
         val textColor = MaterialTheme.colors.onPrimary
@@ -179,7 +182,7 @@ fun PluckImageIndicator(text: String) {
                 .drawBehind {
                     drawCircle(backgroundColor)
                 }
-                .padding(8.dp)
+                .padding(PluckDimens.One)
         )
     }
 }

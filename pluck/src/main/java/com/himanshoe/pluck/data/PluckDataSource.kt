@@ -5,8 +5,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.himanshoe.pluck.util.getImages
 
-class PluckDataSource(private val contentResolver: ContentResolver) :
-    PagingSource<Int, PluckImage>() {
+class PluckDataSource(private val contentResolver: ContentResolver) : PagingSource<Int, PluckImage>() {
+
     private val images = mutableListOf<PluckImage>()
 
     override fun getRefreshKey(state: PagingState<Int, PluckImage>): Int? {

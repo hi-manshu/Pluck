@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.himanshoe.pluck.R
+import com.himanshoe.pluck.theme.PluckDimens
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -31,10 +31,11 @@ fun Permission(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.surface)
-                    .padding(48.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(PluckDimens.Six),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(stringResource(R.string.permission_prompt))
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(PluckDimens.Two))
                 Row {
                     Button(onClick = { permissionState.launchMultiplePermissionRequest() }) {
                         Text(stringResource(R.string.permission_prompt_button))
@@ -47,12 +48,13 @@ fun Permission(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.surface)
-                    .padding(48.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(PluckDimens.Six),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(stringResource(R.string.permissions_rationale))
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(PluckDimens.One))
                 Button(onClick = goToAppSettings) {
-                    Text("Open settings")
+                    Text(stringResource(R.string.open_settings))
                 }
             }
         }) {
