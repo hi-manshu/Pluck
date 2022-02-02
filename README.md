@@ -1,8 +1,15 @@
 ### Pluck - The image-picker library for Compose
 
+![Pluck](art/pluck.jpg)
+
 This is an image-picker for your jetpack compose project. You can select from Gallery/Camera.
 
 _Made with ❤️ for Android Developers by Himanshu_
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.himanshoe/pluck)](https://search.maven.org/artifact/com.himanshoe/pluck)
+[![Github Followers](https://img.shields.io/github/followers/hi-manshu?label=Follow&style=social)](https://github.com/hi-manshu)
+[![Twitter Follow](https://img.shields.io/twitter/follow/hi_man_shoe?label=Follow&style=social)](https://twitter.com/hi_man_shoe)
+
 
 ## Implementation
 
@@ -52,7 +59,7 @@ Permission(
         Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE
     ),
-    goToAppSettings = { 
+    goToAppSettings = {
         // Go to App Settings
     }
 ) {
