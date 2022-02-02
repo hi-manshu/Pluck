@@ -12,8 +12,9 @@ Add the specific permission in `AndroidManifest.xml` file
 
 ```xml
 
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /><uses-permission
-android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+<uses-permission android:name="android.permission.CAMERA" />
 
 ```
 
@@ -52,7 +53,8 @@ Permission(
         Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE
     ),
-    goToAppSettings = { // Go to App Settings
+    goToAppSettings = { 
+        // Go to App Settings
     }
 ) {
     Pluck(onPhotoSelected = {
