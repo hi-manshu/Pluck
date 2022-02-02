@@ -1,6 +1,5 @@
 package com.himanshoe.pluck.util
 
-import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -12,23 +11,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.PermissionsRequired
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.himanshoe.pluck.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Permission(
-    permission: String,
+    permissions: List<String>,
     goToAppSettings: () -> Unit,
     appContent: @Composable () -> Unit,
 ) {
-    val locationPermissionState =
-        rememberPermissionState(permission = permission)
+    val permissionState = rememberMultiplePermissionsState(permissions = permissions)
 
-    PermissionRequired(
-        permissionState = locationPermissionState,
-        permissionNotGrantedContent = {
+    PermissionsRequired(
+        multiplePermissionsState = permissionState,
+        permissionsNotGrantedContent = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -38,13 +36,13 @@ fun Permission(
                 Text(stringResource(R.string.permission_prompt))
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
-                    Button(onClick = { locationPermissionState.launchPermissionRequest() }) {
+                    Button(onClick = { permissionState.launchMultiplePermissionRequest() }) {
                         Text(stringResource(R.string.permission_prompt_button))
                     }
                 }
             }
         },
-        permissionNotAvailableContent = {
+        permissionsNotAvailableContent = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

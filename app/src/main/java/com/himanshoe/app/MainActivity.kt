@@ -8,7 +8,7 @@ import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.himanshoe.pluck.theme.PluckTheme
-import com.himanshoe.pluck.ui.PluckPicker
+import com.himanshoe.pluck.ui.Pluck
 import com.himanshoe.pluck.util.Permission
 
 class MainActivity : ComponentActivity() {
@@ -16,10 +16,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PluckTheme {
-                Permission(permission = Manifest.permission.READ_EXTERNAL_STORAGE,
+                Permission(permissions = listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ),
                     goToAppSettings = { goToAppSettings() }) {
-                    PluckPicker {
-                    }
+                    Pluck(onPhotoSelected = {
+
+                    }, onPhotoClicked = {
+
+                    })
                 }
             }
         }
