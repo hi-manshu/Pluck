@@ -17,6 +17,5 @@ object ModuleExtension {
 
     object FilePath {
         const val gitHooks = "gradle/scripts/git-hooks.gradle.kts"
-        const val detekt = "gradle/config/detekt.yml"
     }
 }

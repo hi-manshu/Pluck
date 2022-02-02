@@ -5,7 +5,6 @@ object Plugins {
     val kotlinAndroid by lazy { "kotlin-android" }
     val vanniktechPublish by lazy { "com.vanniktech.maven.publish" }
     val ktlint by lazy { "org.jlleitschuh.gradle.ktlint" }
-    val detekt by lazy { "io.gitlab.arturbosch.detekt" }
 }
 
 object Deps {
@@ -21,11 +20,7 @@ object Deps {
     }
 
     object Accompanist {
-        val permission by lazy { "com.google.accompanist:accompanist-permissions:0.22.0-rc" }
-    }
-
-    object Android {
-        val materialDesign by lazy { "com.google.android.material:material:${Versions.material}" }
+        val permission by lazy { "com.google.accompanist:accompanist-permissions:0.24.1-alpha" }
     }
 
     object Test {
@@ -38,25 +33,10 @@ object Deps {
         val uiTestJunit by lazy { "androidx.compose.ui:ui-test-junit4:${Versions.compose}" }
     }
 
-    object Jetpack {
-        object Core {
-            val ktx by lazy { "androidx.core:core-ktx:${Versions.core}" }
-        }
-    }
-
-    object Desugar {
-        val jdk by lazy { "com.android.tools:desugar_jdk_libs:1.1.5" }
-    }
-
     object Gradle {
         val kotlinGradlePlugin by lazy { "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}" }
         val androidGradlePlugin by lazy { "com.android.tools.build:gradle:${Versions.androidGradlePlugin}" }
         val vanniktechGradlePlugin by lazy { "com.vanniktech:gradle-maven-publish-plugin:${Versions.vanniktechGradlePlugin}" }
         val ktlintGradlePlugin by lazy { "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlint}" }
-        val detektGradlePlugin by lazy { "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detekt}" }
     }
-}
-
-object ProjectPath {
-    const val kalendar = ":kalendar"
 }

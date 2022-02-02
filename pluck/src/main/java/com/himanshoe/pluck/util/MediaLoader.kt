@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.core.os.bundleOf
 import com.himanshoe.pluck.data.PluckImage
 
-
 private val projection = arrayOf(
     MediaStore.Images.Media._ID,
     MediaStore.Images.Media.DISPLAY_NAME,
@@ -63,16 +62,21 @@ internal fun Context.fetchPagePicture(limit: Int, offset: Int): List<PluckImage>
             )
             val folderName = it.getString(bucketDisplayName)
 
-            Log.d("imagesPlu",
-                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $folderName")
-            pictures.add(PluckImage(contentUri,
-                dateTaken,
-                displayName,
-                id,
-                folderName.toString()))
+            Log.d(
+                "imagesPlu",
+                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $folderName"
+            )
+            pictures.add(
+                PluckImage(
+                    contentUri,
+                    dateTaken,
+                    displayName,
+                    id,
+                    folderName.toString()
+                )
+            )
         }
     }
     cursor?.close()
     return pictures
 }
-
