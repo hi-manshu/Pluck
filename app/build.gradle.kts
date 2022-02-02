@@ -38,7 +38,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":pluck"))
+//    implementation(project(":pluck"))
+    implementation("com.himanshoe:Pluck:1.0.0-alpha01")
 
     implementation(Deps.Compose.ui)
     implementation(Deps.Compose.material)
