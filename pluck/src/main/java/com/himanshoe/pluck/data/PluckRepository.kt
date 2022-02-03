@@ -5,7 +5,7 @@ import androidx.paging.PagingSource
 import com.himanshoe.pluck.util.createCursor
 import com.himanshoe.pluck.util.fetchPagePicture
 
-interface PluckRepository {
+internal interface PluckRepository {
     suspend fun getCount(): Int
     suspend fun getByOffset(offset: Int): PluckImage?
     fun getPicturePagingSource(): PagingSource<Int, PluckImage>

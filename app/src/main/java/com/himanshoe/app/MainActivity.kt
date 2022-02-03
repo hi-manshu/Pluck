@@ -22,7 +22,6 @@ class MainActivity : ComponentActivity() {
                 goToAppSettings = { goToAppSettings() }
             ) {
                 Pluck(onPhotoSelected = {
-                }, onPhotoClicked = {
                 })
             }
         }

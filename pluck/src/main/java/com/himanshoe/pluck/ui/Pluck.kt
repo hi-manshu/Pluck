@@ -1,10 +1,9 @@
 package com.himanshoe.pluck.ui
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -48,24 +47,26 @@ import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
+import com.himanshoe.pluck.util.PluckUriManager
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 private const val SELECT = "SELECT"
 private const val ONE = 1
+private const val THREE = 3
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun Pluck(
     onPhotoSelected: (List<PluckImage>) -> Unit,
-    onPhotoClicked: (Bitmap?) -> Unit,
 ) {
     val context = LocalContext.current
     val pluckViewModel: PluckViewModel = viewModel(
         factory = PluckViewModelFactory(
             PluckRepositoryImpl(
-                context
-            )
+                context,
+            ),
+            PluckUriManager(context)
         )
     )
 
@@ -84,19 +85,19 @@ fun Pluck(
     }) {
         val modifier = Modifier.padding(2.dp)
         val cameraLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-                onPhotoClicked(it)
+            rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+                onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
             }
         LazyVerticalGrid(
             modifier = Modifier.background(MaterialTheme.colors.surface),
-            cells = GridCells.Fixed(3)
+            cells = GridCells.Fixed(THREE)
         ) {
             item {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = modifier
                         .size(PluckDimens.Sixteen)
-                        .clickable { handleCamera(cameraLauncher) }
+                        .clickable { handleCamera(pluckViewModel, cameraLauncher) }
                         .then(Modifier.background(MaterialTheme.colors.background))
                 ) {
                     Image(
@@ -128,8 +129,11 @@ fun Pluck(
     }
 }
 
-private fun handleCamera(onPhotoClicked: ManagedActivityResultLauncher<Void?, Bitmap?>) {
-    onPhotoClicked.launch()
+private fun handleCamera(
+    pluckViewModel: PluckViewModel,
+    onPhotoClicked: ManagedActivityResultLauncher<Uri, Boolean>,
+) {
+    onPhotoClicked.launch(pluckViewModel.getCameraImageUri())
 }
 
 @Composable

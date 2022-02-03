@@ -1,5 +1,6 @@
 package com.himanshoe.pluck.ui
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -8,16 +9,23 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
+import com.himanshoe.pluck.util.PluckUriManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel() {
+internal class PluckViewModel(
+    private val pluckRepository: PluckRepository,
+    private val pluckUriManager: PluckUriManager,
+) : ViewModel() {
 
     private val selectedImageList: MutableList<PluckImage> = ArrayList()
     private val _selectedImage = MutableStateFlow(emptyList<PluckImage>())
+    private var uri: Uri? = null
 
     val selectedImage: StateFlow<List<PluckImage>> = _selectedImage
+
+    fun getPluckImage() = pluckUriManager.getPluckImage(uri)
 
     fun getImages(): Flow<PagingData<PluckImage>> = Pager(
         config = PagingConfig(pageSize = 50, initialLoadSize = 50, enablePlaceholders = true)
@@ -33,5 +41,10 @@ class PluckViewModel(private val pluckRepository: PluckRepository) : ViewModel()
                 .forEach { selectedImageList.remove(it) }
         }
         _selectedImage.value = (selectedImageList).toSet().toList()
+    }
+
+    fun getCameraImageUri(): Uri? {
+        uri = pluckUriManager.newUri
+        return uri
     }
 }
