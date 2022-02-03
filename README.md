@@ -31,7 +31,7 @@ In `build.gradle` of app module, include the following dependency
 
 ```gradle
 dependencies {
-  implementation("com.himanshoe:pluck:1.0.0-alpha01")
+  implementation("com.himanshoe:pluck:1.0.0-alpha02")
 }
 ```
 
@@ -43,9 +43,8 @@ Now, to start using Pluck, use the composable `Pluck` like,
 
 ```kotlin
 Pluck(onPhotoSelected = {
-    // List of PluckImage when selecting from Gallery             
-}, onPhotoClicked = {
-    // Bitmap when using Camera
+    // List of PluckImage when selecting from Gallery/Camera. When checking with Camera
+    // It returns only one item in list
 })
 ```
 
@@ -64,9 +63,8 @@ Permission(
     }
 ) {
     Pluck(onPhotoSelected = {
-        // List of PluckImage when selecting from Gallery             
-    }, onPhotoClicked = {
-        // Bitmap when using Camera
+        // List of PluckImage when selecting from Gallery/Camera. When checking with Camera
+        // It returns only one item in list
     })
 }
 ```
