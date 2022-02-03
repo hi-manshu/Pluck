@@ -1,0 +1,28 @@
+- name: pull request
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    on: pull_request
+jobs:
+apk:
+  name: Generate APK
+  needs: test
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build APK
+      run: bash ./gradlew assembleDebug --stacktrace
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: copy file
+        uses: canastro/copy-file-action@master
+        with:
+          source: "app/build/outputs/apk/debug/app-debug.apk"
+          target: "apk/app-debug.apk"
