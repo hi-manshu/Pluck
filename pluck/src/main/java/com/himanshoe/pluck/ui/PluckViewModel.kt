@@ -29,6 +29,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.himanshoe.pluck.PluckConfiguration
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepository
 import com.himanshoe.pluck.util.PluckUriManager
@@ -38,6 +39,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 internal class PluckViewModel(
     private val pluckRepository: PluckRepository,
+    private val pluckConfiguration: PluckConfiguration,
     private val pluckUriManager: PluckUriManager,
 ) : ViewModel() {
 
@@ -57,7 +59,13 @@ internal class PluckViewModel(
 
     fun isPhotoSelected(pluckImage: PluckImage, isSelected: Boolean) {
         if (isSelected) {
-            selectedImageList.add(pluckImage)
+            if (pluckConfiguration.multipleImagesAllowed) {
+                selectedImageList.add(pluckImage)
+            } else {
+                if (selectedImageList.isEmpty() && selectedImageList.count() < 1) {
+                    selectedImageList.add(pluckImage)
+                }
+            }
         } else {
             selectedImageList.filter { it.id == pluckImage.id }
                 .forEach { selectedImageList.remove(it) }
