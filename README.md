@@ -31,7 +31,7 @@ In `build.gradle` of app module, include the following dependency
 
 ```gradle
 dependencies {
-  implementation("com.himanshoe:pluck:1.0.0-alpha02")
+  implementation("com.himanshoe:pluck:1.0.0-RC1")
 }
 ```
 

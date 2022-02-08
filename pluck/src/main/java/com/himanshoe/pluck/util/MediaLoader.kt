@@ -28,7 +28,6 @@ import android.content.Context
 import android.database.Cursor
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.core.os.bundleOf
 import com.himanshoe.pluck.data.PluckImage
 
@@ -84,10 +83,6 @@ internal fun Context.fetchPagePicture(limit: Int, offset: Int): List<PluckImage>
             )
             val folderName = it.getString(bucketDisplayName)
 
-            Log.d(
-                "imagesPlu",
-                "id : $id, contentUri: $contentUri, diplayName: $displayName, folder: $folderName"
-            )
             pictures.add(
                 PluckImage(
                     contentUri,
