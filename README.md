@@ -10,7 +10,6 @@ _Made with ❤️ for Android Developers by Himanshu_
 [![Github Followers](https://img.shields.io/github/followers/hi-manshu?label=Follow&style=social)](https://github.com/hi-manshu)
 [![Twitter Follow](https://img.shields.io/twitter/follow/hi_man_shoe?label=Follow&style=social)](https://twitter.com/hi_man_shoe)
 
-
 ## Implementation
 
 #### Step: 01
@@ -67,6 +66,18 @@ Permission(
         // It returns only one item in list
     })
 }
+```
+
+#### 03
+
+If you want to configure do you want to select single image or multiple image from gallery you need
+to edit the `PluckConfiguration` like,
+
+```kotlin
+    Pluck(
+        pluckConfiguration = PluckConfiguration(multipleImagesAllowed = true),
+        onPhotoSelected = { }
+    )
 ```
 
 ### Drop a ⭐ to keep me motivated to keep working on Open-Source. Updates coming Soon!
