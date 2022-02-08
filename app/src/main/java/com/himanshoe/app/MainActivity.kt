@@ -29,6 +29,7 @@ import android.os.Bundle
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.himanshoe.pluck.PluckConfiguration
 import com.himanshoe.pluck.ui.Pluck
 import com.himanshoe.pluck.ui.permission.Permission
 
@@ -43,8 +44,10 @@ class MainActivity : ComponentActivity() {
                 ),
                 goToAppSettings = { goToAppSettings() }
             ) {
-                Pluck(onPhotoSelected = {
-                })
+                Pluck(pluckConfiguration = PluckConfiguration(true),
+                    onPhotoSelected = {
+                    }
+                )
             }
         }
     }

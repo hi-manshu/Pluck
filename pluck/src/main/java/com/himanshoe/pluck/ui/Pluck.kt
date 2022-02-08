@@ -37,19 +37,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -65,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
+import com.himanshoe.pluck.PluckConfiguration
 import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
@@ -80,6 +72,7 @@ private const val THREE = 3
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun Pluck(
+    pluckConfiguration: PluckConfiguration = PluckConfiguration(),
     onPhotoSelected: (List<PluckImage>) -> Unit,
 ) {
     val context = LocalContext.current
@@ -88,7 +81,8 @@ fun Pluck(
             PluckRepositoryImpl(
                 context,
             ),
-            PluckUriManager(context)
+            PluckUriManager(context),
+            pluckConfiguration
         )
     )
 
@@ -137,6 +131,7 @@ fun Pluck(
                     PluckImage(
                         modifier = modifier,
                         pluckImage = pluckImage,
+                        pluckConfiguration = pluckConfiguration,
                         selectedImages = pluckViewModel.selectedImage,
                         onSelectedPhoto = { image, isSelected ->
                             pluckViewModel.isPhotoSelected(
@@ -163,6 +158,7 @@ internal fun PluckImage(
     modifier: Modifier,
     pluckImage: PluckImage,
     selectedImages: StateFlow<List<PluckImage>>,
+    pluckConfiguration: PluckConfiguration,
     onSelectedPhoto: (PluckImage, isSelected: Boolean) -> Unit,
 ) {
     val selected = remember { mutableStateOf(false) }
@@ -175,10 +171,6 @@ internal fun PluckImage(
 
     Box(
         modifier = modifier
-            .clickable {
-                selected.value = !selected.value
-                onSelectedPhoto(pluckImage, selected.value)
-            }
             .size(PluckDimens.Sixteen),
         contentAlignment = Alignment.Center,
     ) {
@@ -191,8 +183,18 @@ internal fun PluckImage(
         Box(
             modifier = Modifier
                 .clickable {
-                    selected.value = !selected.value
-                    onSelectedPhoto(pluckImage, selected.value)
+                    if (!pluckConfiguration.multipleImagesAllowed) {
+                        if (images.count() < 1) {
+                            selected.value = !selected.value
+                            onSelectedPhoto(pluckImage, selected.value)
+                        } else {
+                            selected.value = false
+                            onSelectedPhoto(pluckImage, selected.value)
+                        }
+                    } else {
+                        selected.value = !selected.value
+                        onSelectedPhoto(pluckImage, selected.value)
+                    }
                 }
                 .size(PluckDimens.Sixteen),
             contentAlignment = Alignment.TopEnd,
