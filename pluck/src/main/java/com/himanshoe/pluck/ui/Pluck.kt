@@ -36,7 +36,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyGridState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -76,6 +78,8 @@ fun Pluck(
     onPhotoSelected: (List<PluckImage>) -> Unit,
 ) {
     val context = LocalContext.current
+    val gridState: LazyGridState = rememberLazyGridState()
+
     val pluckViewModel: PluckViewModel = viewModel(
         factory = PluckViewModelFactory(
             PluckRepositoryImpl(
@@ -104,27 +108,17 @@ fun Pluck(
             rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
                 onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
             }
+
         LazyVerticalGrid(
+            state = gridState,
             modifier = Modifier.background(MaterialTheme.colors.surface),
             cells = GridCells.Fixed(THREE)
         ) {
             item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = modifier
-                        .size(PluckDimens.Sixteen)
-                        .clickable { handleCamera(pluckViewModel, cameraLauncher) }
-                        .then(Modifier.background(MaterialTheme.colors.background))
-                ) {
-                    Image(
-                        painter = rememberImagePainter(R.drawable.ic_camera),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(PluckDimens.Six)
-                            .alpha(0.2F)
-                    )
-                }
+                CameraIcon(
+                    modifier = modifier,
+                    cameraLauncher = cameraLauncher,
+                    pluckViewModel = pluckViewModel)
             }
             items(lazyPluckImages.itemCount) { index ->
                 lazyPluckImages[index]?.let { pluckImage ->
@@ -143,6 +137,30 @@ fun Pluck(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun CameraIcon(
+    modifier: Modifier,
+    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    pluckViewModel: PluckViewModel,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(PluckDimens.Sixteen)
+            .clickable { handleCamera(pluckViewModel, cameraLauncher) }
+            .then(Modifier.background(MaterialTheme.colors.background))
+    ) {
+        Image(
+            painter = rememberImagePainter(R.drawable.ic_camera),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(PluckDimens.Six)
+                .alpha(0.2F)
+        )
     }
 }
 
@@ -180,11 +198,12 @@ internal fun PluckImage(
             contentScale = ContentScale.Crop,
             modifier = Modifier.padding(animatedPadding)
         )
+
         Box(
             modifier = Modifier
                 .clickable {
                     if (!pluckConfiguration.multipleImagesAllowed) {
-                        if (images.count() < 1) {
+                        if (images.isEmpty()) {
                             selected.value = !selected.value
                             onSelectedPhoto(pluckImage, selected.value)
                         } else {
@@ -197,7 +216,7 @@ internal fun PluckImage(
                     }
                 }
                 .size(PluckDimens.Sixteen),
-            contentAlignment = Alignment.TopEnd,
+            contentAlignment = Alignment.BottomEnd,
         ) {
             PluckImageIndicator(text = images.indexOf(pluckImage).plus(ONE).toString())
         }
