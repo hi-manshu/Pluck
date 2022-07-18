@@ -26,13 +26,12 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
@@ -46,7 +45,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
@@ -62,7 +61,7 @@ import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
-import com.himanshoe.pluck.theme.PluckDimens.Quarter
+import com.himanshoe.pluck.theme.PluckDimens.HalfQuarter
 import com.himanshoe.pluck.util.PluckUriManager
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
@@ -103,7 +102,7 @@ fun Pluck(
             icon = { Icon(Icons.Rounded.Check, "") }
         )
     }) {
-        val modifier = Modifier.padding(Quarter)
+        val modifier = Modifier.padding(HalfQuarter)
         val cameraLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
                 onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
@@ -181,11 +180,7 @@ internal fun PluckImage(
 ) {
     val selected = remember { mutableStateOf(false) }
     val images by selectedImages.collectAsState(initial = emptyList())
-    val transition = updateTransition(selected.value, label = "change-padding")
-
-    val animatedPadding by transition.animateDp(label = "change-padding") { isSelected ->
-        if (isSelected) PluckDimens.One else PluckDimens.Zero
-    }
+    val backgroundColor = if (selected.value) Color.Black else Color.Transparent
 
     Box(
         modifier = modifier
@@ -196,11 +191,11 @@ internal fun PluckImage(
             painter = rememberImagePainter(pluckImage.uri),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.padding(animatedPadding)
+            modifier = modifier
         )
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .clickable {
                     if (!pluckConfiguration.multipleImagesAllowed) {
                         if (images.isEmpty()) {
@@ -215,32 +210,34 @@ internal fun PluckImage(
                         onSelectedPhoto(pluckImage, selected.value)
                     }
                 }
-                .size(PluckDimens.Sixteen),
-            contentAlignment = Alignment.BottomEnd,
+                .fillMaxSize()
+                .alpha(0.5F)
+                .background(color = backgroundColor),
         ) {
-            PluckImageIndicator(text = images.indexOf(pluckImage).plus(ONE).toString())
+            PluckImageIndicator(
+                modifier = modifier,
+                text = images.indexOf(pluckImage).plus(ONE).toString())
         }
     }
 }
 
 @Composable
-internal fun PluckImageIndicator(text: String) {
+internal fun PluckImageIndicator(modifier: Modifier = Modifier, text: String) {
     if (text.toInt() > 0) {
-        val backgroundColor = MaterialTheme.colors.primary
         val textColor = MaterialTheme.colors.onPrimary
 
         Text(
             text = text,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.End,
             color = textColor,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
-            modifier = Modifier
-                .drawBehind {
-                    drawCircle(backgroundColor)
-                }
+            fontSize = 16.sp,
+            modifier = modifier
+                .fillMaxSize()
                 .padding(PluckDimens.One)
+
+
         )
     }
 }
