@@ -44,7 +44,8 @@ class MainActivity : ComponentActivity() {
                 ),
                 goToAppSettings = { goToAppSettings() }
             ) {
-                Pluck(pluckConfiguration = PluckConfiguration(true),
+                Pluck(
+                    pluckConfiguration = PluckConfiguration(true),
                     onPhotoSelected = {
                     }
                 )

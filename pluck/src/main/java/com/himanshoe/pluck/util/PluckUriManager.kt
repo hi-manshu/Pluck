@@ -39,9 +39,7 @@ internal class PluckUriManager(private val context: Context) {
         }
     }
 
-    private val resolver by lazy { context.contentResolver }
-
-    val newUri = resolver.insert(photoCollection, setupPhotoDetails())
+    fun getNewUri() = context.contentResolver.insert(photoCollection, setupPhotoDetails())
 
     /**
      * generates a new pluck image
@@ -53,6 +51,7 @@ internal class PluckUriManager(private val context: Context) {
             setupPhotoDetails().getAsString(MediaStore.Images.Media.DISPLAY_NAME), null, null
         )
     }
+
     /**
      * generates a photo detail
      */

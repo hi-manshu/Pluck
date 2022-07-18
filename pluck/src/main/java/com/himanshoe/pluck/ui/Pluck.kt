@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
@@ -61,6 +60,7 @@ import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
+import com.himanshoe.pluck.theme.PluckDimens.Quarter
 import com.himanshoe.pluck.util.PluckUriManager
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
@@ -99,7 +99,7 @@ fun Pluck(
             icon = { Icon(Icons.Rounded.Check, "") }
         )
     }) {
-        val modifier = Modifier.padding(2.dp)
+        val modifier = Modifier.padding(Quarter)
         val cameraLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
                 onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
