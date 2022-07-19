@@ -2,7 +2,7 @@
 
 ![Pluck](art/pluck.jpg)
 
-This is an image-picker for your jetpack compose project. You can select from Gallery/Camera.
+This is an image-picker for your jetpack compose project. You can select from Gallery/Camera. This uses Material you and will be getting support for it in future as well.
 
 _Made with ❤️ for Android Developers by Himanshu_
 
@@ -30,7 +30,7 @@ In `build.gradle` of app module, include the following dependency
 
 ```gradle
 dependencies {
-  implementation("com.himanshoe:pluck:1.0.0-RC1")
+  implementation("com.himanshoe:pluck:1.0.0-RC2")
 }
 ```
 

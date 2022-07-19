@@ -25,21 +25,25 @@ package com.himanshoe.pluck.data
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
+private const val Zero = 0
+private const val One = 1
+
 class PluckDataSource(private val onFetch: (limit: Int, offset: Int) -> List<PluckImage>) :
     PagingSource<Int, PluckImage>() {
+
     override fun getRefreshKey(state: PagingState<Int, PluckImage>): Int? {
         return state.anchorPosition?.let {
-            state.closestPageToPosition(it)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
+            state.closestPageToPosition(it)?.prevKey?.plus(One)
+                ?: state.closestPageToPosition(it)?.nextKey?.minus(One)
         }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PluckImage> {
-        val pageNumber = params.key ?: 0
+        val pageNumber = params.key ?: Zero
         val pageSize = params.loadSize
         val pictures = onFetch.invoke(pageSize, pageNumber * pageSize)
-        val prevKey = if (pageNumber > 0) pageNumber - 1 else null
-        val nextKey = if (pictures.isNotEmpty()) pageNumber + 1 else null
+        val prevKey = if (pageNumber > Zero) pageNumber.minus(One) else null
+        val nextKey = if (pictures.isNotEmpty()) pageNumber.plus(One) else null
 
         return LoadResult.Page(
             data = pictures,

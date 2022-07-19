@@ -74,7 +74,7 @@ internal class PluckViewModel(
     }
 
     fun getCameraImageUri(): Uri? {
-        uri = pluckUriManager.newUri
+        uri = pluckUriManager.getNewUri()
         return uri
     }
 }

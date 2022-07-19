@@ -22,35 +22,44 @@ package com.himanshoe.pluck.ui
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
@@ -61,21 +70,26 @@ import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
+import com.himanshoe.pluck.theme.PluckDimens.HalfQuarter
 import com.himanshoe.pluck.util.PluckUriManager
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
-private const val SELECT = "SELECT"
-private const val ONE = 1
-private const val THREE = 3
+private const val Select = "SELECT"
+private const val One = 1
+private const val Three = 3
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun Pluck(
+    modifier: Modifier = Modifier,
     pluckConfiguration: PluckConfiguration = PluckConfiguration(),
     onPhotoSelected: (List<PluckImage>) -> Unit,
 ) {
     val context = LocalContext.current
+    val gridState: LazyGridState = rememberLazyGridState()
+
     val pluckViewModel: PluckViewModel = viewModel(
         factory = PluckViewModelFactory(
             PluckRepositoryImpl(
@@ -90,46 +104,38 @@ fun Pluck(
         pluckViewModel.getImages().collectAsLazyPagingItems()
 
     Scaffold(floatingActionButton = {
+
         ExtendedFloatingActionButton(
             modifier = Modifier,
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.onPrimary,
-            text = { Text(text = SELECT) },
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            text = { Text(text = Select) },
             onClick = { onPhotoSelected(pluckViewModel.selectedImage.value) },
-            icon = { Icon(Icons.Rounded.Check, "") }
+            icon = { Icon(Icons.Rounded.Check, "fab-icon") }
         )
-    }) {
-        val modifier = Modifier.padding(2.dp)
+    }, content = {
+        val newModifier = modifier.padding(HalfQuarter)
         val cameraLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+            rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { it: Boolean ->
                 onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
             }
+
         LazyVerticalGrid(
-            modifier = Modifier.background(MaterialTheme.colors.surface),
-            cells = GridCells.Fixed(THREE)
+            state = gridState,
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+            columns = GridCells.Fixed(Three)
         ) {
             item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = modifier
-                        .size(PluckDimens.Sixteen)
-                        .clickable { handleCamera(pluckViewModel, cameraLauncher) }
-                        .then(Modifier.background(MaterialTheme.colors.background))
-                ) {
-                    Image(
-                        painter = rememberImagePainter(R.drawable.ic_camera),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(PluckDimens.Six)
-                            .alpha(0.2F)
-                    )
-                }
+                CameraIcon(
+                    modifier = newModifier,
+                    cameraLauncher = cameraLauncher,
+                    pluckViewModel = pluckViewModel
+                )
             }
             items(lazyPluckImages.itemCount) { index ->
                 lazyPluckImages[index]?.let { pluckImage ->
                     PluckImage(
-                        modifier = modifier,
+                        modifier = newModifier,
                         pluckImage = pluckImage,
                         pluckConfiguration = pluckConfiguration,
                         selectedImages = pluckViewModel.selectedImage,
@@ -143,6 +149,30 @@ fun Pluck(
                 }
             }
         }
+    })
+}
+
+@Composable
+internal fun CameraIcon(
+    modifier: Modifier,
+    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    pluckViewModel: PluckViewModel,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(PluckDimens.Sixteen)
+            .clickable { handleCamera(pluckViewModel, cameraLauncher) }
+            .then(Modifier.background(MaterialTheme.colorScheme.background))
+    ) {
+        Image(
+            painter = rememberImagePainter(R.drawable.ic_camera),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(PluckDimens.Six)
+                .alpha(0.2F)
+        )
     }
 }
 
@@ -161,13 +191,10 @@ internal fun PluckImage(
     pluckConfiguration: PluckConfiguration,
     onSelectedPhoto: (PluckImage, isSelected: Boolean) -> Unit,
 ) {
+
     val selected = remember { mutableStateOf(false) }
     val images by selectedImages.collectAsState(initial = emptyList())
-    val transition = updateTransition(selected.value, label = "change-padding")
-
-    val animatedPadding by transition.animateDp(label = "change-padding") { isSelected ->
-        if (isSelected) PluckDimens.One else PluckDimens.Zero
-    }
+    val backgroundColor = if (selected.value) Color.Black else Color.Transparent
 
     Box(
         modifier = modifier
@@ -178,13 +205,14 @@ internal fun PluckImage(
             painter = rememberImagePainter(pluckImage.uri),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.padding(animatedPadding)
+            modifier = modifier
         )
+
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .clickable {
                     if (!pluckConfiguration.multipleImagesAllowed) {
-                        if (images.count() < 1) {
+                        if (images.isEmpty()) {
                             selected.value = !selected.value
                             onSelectedPhoto(pluckImage, selected.value)
                         } else {
@@ -196,31 +224,32 @@ internal fun PluckImage(
                         onSelectedPhoto(pluckImage, selected.value)
                     }
                 }
-                .size(PluckDimens.Sixteen),
-            contentAlignment = Alignment.TopEnd,
+                .fillMaxSize()
+                .alpha(0.5F)
+                .background(color = backgroundColor),
         ) {
-            PluckImageIndicator(text = images.indexOf(pluckImage).plus(ONE).toString())
+            PluckImageIndicator(
+                modifier = modifier,
+                text = images.indexOf(pluckImage).plus(One).toString()
+            )
         }
     }
 }
 
 @Composable
-internal fun PluckImageIndicator(text: String) {
+internal fun PluckImageIndicator(modifier: Modifier = Modifier, text: String) {
     if (text.toInt() > 0) {
-        val backgroundColor = MaterialTheme.colors.primary
-        val textColor = MaterialTheme.colors.onPrimary
+        val textColor = MaterialTheme.colorScheme.onPrimary
 
         Text(
             text = text,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.End,
             color = textColor,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
-            modifier = Modifier
-                .drawBehind {
-                    drawCircle(backgroundColor)
-                }
+            fontSize = 16.sp,
+            modifier = modifier
+                .fillMaxSize()
                 .padding(PluckDimens.One)
         )
     }

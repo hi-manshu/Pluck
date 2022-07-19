@@ -17,6 +17,8 @@ object Deps {
         val activity by lazy { "androidx.activity:activity-compose:${Versions.activity}" }
         val viewmodel by lazy { "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07" }
         val paging by lazy { "androidx.paging:paging-compose:1.0.0-alpha14" }
+        val materialYou by lazy { "androidx.compose.material3:material3:1.0.0-alpha14" }
+
     }
 
     object Accompanist {

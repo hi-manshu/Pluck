@@ -40,7 +40,7 @@ android {
 
 dependencies {
     implementation(Deps.Compose.ui)
-    implementation(Deps.Compose.material)
+    implementation(Deps.Compose.materialYou)
     implementation(Deps.Compose.uiToolingPreview)
     implementation(Deps.Compose.activity)
     implementation(Deps.Compose.paging)
