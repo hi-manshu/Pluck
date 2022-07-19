@@ -42,7 +42,7 @@ dependencies {
 //    implementation("com.himanshoe:pluck:1.0.0-RC1")
 
     implementation(Deps.Compose.ui)
-    implementation(Deps.Compose.material)
+    implementation(Deps.Compose.materialYou)
     implementation(Deps.Compose.uiToolingPreview)
     implementation(Deps.Compose.activity)
 

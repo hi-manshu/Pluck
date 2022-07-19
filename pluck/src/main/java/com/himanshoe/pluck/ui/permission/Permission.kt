@@ -22,6 +22,7 @@ package com.himanshoe.pluck.ui.permission
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,10 +33,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,8 +57,9 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.himanshoe.pluck.R
 import com.himanshoe.pluck.theme.PluckDimens
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 fun Permission(
     permissions: List<String>,
     goToAppSettings: () -> Unit,
@@ -71,7 +74,7 @@ fun Permission(
         permissionsNotGrantedContent = {
             Scaffold(
                 Modifier
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .fillMaxSize()
                     .padding(PluckDimens.One),
             ) {
@@ -94,7 +97,7 @@ fun Permission(
 
                     Text(
                         stringResource(R.string.permission_prompt), textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.onSurface,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 24.sp,
@@ -105,7 +108,7 @@ fun Permission(
                         modifier = Modifier.alpha(0.3F),
                         text = "Allowing access to your camera/storage will let you pick your memories asap!",
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.onSurface,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
@@ -118,11 +121,11 @@ fun Permission(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colors.primary),
+                            .background(MaterialTheme.colorScheme.primary),
                     ) {
                         Text(
                             text = "Enable permissions",
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
@@ -148,7 +151,7 @@ fun Permission(
 
                 Text(
                     stringResource(R.string.permissions_rationale), textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 24.sp,
@@ -159,11 +162,11 @@ fun Permission(
                     onClick = { goToAppSettings() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.primary),
+                        .background(MaterialTheme.colorScheme.primary),
                 ) {
                     Text(
                         text = "Go to Settings!",
-                        color = MaterialTheme.colors.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
