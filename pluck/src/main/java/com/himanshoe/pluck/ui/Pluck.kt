@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.himanshoe.pluck.PluckConfiguration
 import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
@@ -166,7 +166,7 @@ internal fun CameraIcon(
             .then(Modifier.background(MaterialTheme.colorScheme.background))
     ) {
         Image(
-            painter = rememberImagePainter(R.drawable.ic_camera),
+            painter = rememberAsyncImagePainter(R.drawable.ic_camera),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -202,7 +202,7 @@ internal fun PluckImage(
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = rememberImagePainter(pluckImage.uri),
+            painter = rememberAsyncImagePainter(pluckImage.uri),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier

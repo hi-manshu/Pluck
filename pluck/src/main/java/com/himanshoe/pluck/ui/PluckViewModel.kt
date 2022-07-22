@@ -62,7 +62,7 @@ internal class PluckViewModel(
             if (pluckConfiguration.multipleImagesAllowed) {
                 selectedImageList.add(pluckImage)
             } else {
-                if (selectedImageList.isEmpty() && selectedImageList.count() < 1) {
+                if (selectedImageList.isEmpty()) {
                     selectedImageList.add(pluckImage)
                 }
             }
