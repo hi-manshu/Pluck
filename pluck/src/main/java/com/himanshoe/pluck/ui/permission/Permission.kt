@@ -50,7 +50,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -86,7 +86,7 @@ fun Permission(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = rememberImagePainter(R.drawable.ic_camera_moments),
+                        painter = rememberAsyncImagePainter(R.drawable.ic_camera_moments),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -140,7 +140,7 @@ fun Permission(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = rememberImagePainter(R.drawable.ic_sad),
+                    painter = rememberAsyncImagePainter(R.drawable.ic_sad),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
