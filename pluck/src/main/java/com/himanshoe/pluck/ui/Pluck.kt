@@ -30,10 +30,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -60,6 +57,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
@@ -70,7 +68,7 @@ import com.himanshoe.pluck.R
 import com.himanshoe.pluck.data.PluckImage
 import com.himanshoe.pluck.data.PluckRepositoryImpl
 import com.himanshoe.pluck.theme.PluckDimens
-import com.himanshoe.pluck.theme.PluckDimens.HalfQuarter
+import com.himanshoe.pluck.theme.PluckDimens.Quarter
 import com.himanshoe.pluck.util.PluckUriManager
 import com.himanshoe.pluck.util.PluckViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
@@ -114,7 +112,6 @@ fun Pluck(
             icon = { Icon(Icons.Rounded.Check, "fab-icon") }
         )
     }, content = {
-        val newModifier = modifier.padding(HalfQuarter)
         val cameraLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { it: Boolean ->
                 onPhotoSelected(listOf(pluckViewModel.getPluckImage()) as List<PluckImage>)
@@ -122,12 +119,16 @@ fun Pluck(
 
         LazyVerticalGrid(
             state = gridState,
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            columns = GridCells.Fixed(Three)
+            modifier = modifier
+                .padding(Quarter)
+                .background(MaterialTheme.colorScheme.surface),
+            columns = GridCells.Fixed(pluckConfiguration.gridCount),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
                 CameraIcon(
-                    modifier = newModifier,
+                    modifier = modifier,
                     cameraLauncher = cameraLauncher,
                     pluckViewModel = pluckViewModel
                 )
@@ -135,7 +136,7 @@ fun Pluck(
             items(lazyPluckImages.itemCount) { index ->
                 lazyPluckImages[index]?.let { pluckImage ->
                     PluckImage(
-                        modifier = newModifier,
+                        modifier = modifier,
                         pluckImage = pluckImage,
                         pluckConfiguration = pluckConfiguration,
                         selectedImages = pluckViewModel.selectedImage,
@@ -161,16 +162,16 @@ internal fun CameraIcon(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(PluckDimens.Sixteen)
             .clickable { handleCamera(pluckViewModel, cameraLauncher) }
             .then(Modifier.background(MaterialTheme.colorScheme.background))
+            .padding(8.dp)
     ) {
         Image(
             painter = rememberAsyncImagePainter(R.drawable.ic_camera),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(PluckDimens.Six)
+                .aspectRatio(1f)
                 .alpha(0.2F)
         )
     }
@@ -197,15 +198,14 @@ internal fun PluckImage(
     val backgroundColor = if (selected.value) Color.Black else Color.Transparent
 
     Box(
-        modifier = modifier
-            .size(PluckDimens.Sixteen),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = rememberAsyncImagePainter(pluckImage.uri),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = modifier
+            modifier = modifier.aspectRatio(1f)
         )
 
         Box(
@@ -225,6 +225,7 @@ internal fun PluckImage(
                     }
                 }
                 .fillMaxSize()
+                .aspectRatio(1f)
                 .alpha(0.5F)
                 .background(color = backgroundColor),
         ) {
