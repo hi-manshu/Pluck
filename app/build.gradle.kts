@@ -39,7 +39,7 @@ android {
 
 dependencies {
 //    implementation(project(":pluck"))
-    implementation("com.himanshoe:pluck:1.0.0-RC2")
+    implementation("com.himanshoe:pluck:1.0.0")
 
     implementation(Deps.Compose.ui)
     implementation(Deps.Compose.materialYou)
