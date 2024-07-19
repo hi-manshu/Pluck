@@ -46,7 +46,7 @@ dependencies {
     implementation(Deps.Compose.paging)
     implementation(Deps.Compose.activity)
     implementation(Deps.Compose.viewmodel)
-    implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(Deps.Accompanist.permission)
     implementation("androidx.paging:paging-common-ktx:3.1.0")
 
