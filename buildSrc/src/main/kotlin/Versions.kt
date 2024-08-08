@@ -1,5 +1,5 @@
 object Versions {
-    const val compose = "1.1.1"
+    const val compose = "1.5.15"
     const val androidGradlePlugin = "7.0.3"
     const val vanniktechGradlePlugin = "0.18.0"
     const val kotlin = "1.6.10"
